@@ -1,5 +1,13 @@
 version: 0.2
 
+
+env:
+  secrets-manager:
+    ACCOUNT_ID: "tc-three-tier-app_frontend:ACCOUNT_ID"
+    IMAGE_REPO_NAME: "tc-three-tier-app_frontend:IMAGE_REPO_NAME"
+    AWS_DEFAULT_REGION: "tc-three-tier-app_frontend:AWS_DEFAULT_REGION"
+    CONTAINER_NAME: "tc-three-tier-app_frontend:CONTAINER_NAME"
+
 phases:
   pre_build:
     commands:
