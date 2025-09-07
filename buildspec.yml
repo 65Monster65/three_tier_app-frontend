@@ -1,35 +1,31 @@
 version: 0.2
 
-
 env:
   secrets-manager:
-    ACCOUNT_ID: "tc-three-tier-app_frontend:ACCOUNT_ID"
-    IMAGE_REPO_NAME: "tc-three-tier-app_frontend:IMAGE_REPO_NAME"
-    AWS_DEFAULT_REGION: "tc-three-tier-app_frontend:AWS_DEFAULT_REGION"
-    CONTAINER_NAME: "tc-three-tier-app_frontend:CONTAINER_NAME"
+    ACCOUNT_ID: "myapp/build-env:ACCOUNT_ID"
+    IMAGE_REPO_NAME: "myapp/build-env:IMAGE_REPO_NAME"
+    AWS_DEFAULT_REGION: "myapp/build-env:AWS_DEFAULT_REGION"
+    CONTAINER_NAME: "myapp/build-env:CONTAINER_NAME"
 
 phases:
   pre_build:
     commands:
+      - echo "ACCOUNT_ID=$ACCOUNT_ID, REGION=$AWS_DEFAULT_REGION"
+      - REPOSITORY_URI=$ACCOUNT_ID.dkr.ecr.$AWS_DEFAULT_REGION.amazonaws.com/$IMAGE_REPO_NAME
       - echo Logging in to Amazon ECR...
-      - aws --version
-      - REPOSITORY_URI=${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}
-      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin ${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com
+      - aws ecr get-login-password --region $AWS_DEFAULT_REGION | docker login --username AWS --password-stdin $REPOSITORY_URI
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
     commands:
-      - echo Build started on `date`
-      - echo Building the Docker image...
+      - echo "Building Docker image..."
       - docker build -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
-      - echo Build completed on `date`
-      - echo Pushing the Docker image...
+      - echo "Pushing images..."
       - docker push $REPOSITORY_URI:latest
       - docker push $REPOSITORY_URI:$IMAGE_TAG
-      - echo Writing image definitions file...
       - printf '[{"name":"%s","imageUri":"%s"}]' $CONTAINER_NAME $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 
 artifacts:
