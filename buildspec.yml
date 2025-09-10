@@ -2,15 +2,14 @@ version: 0.2
 
 env:
   secrets-manager:
-    ACCOUNT_ID:    "frontend-env-$ENVIRONMENT:ACCOUNT_ID"
-    IMAGE_REPO_NAME: "frontend-env-$ENVIRONMENT:IMAGE_REPO_NAME"
-    AWS_DEFAULT_REGION: "frontend-env-$ENVIRONMENT:AWS_DEFAULT_REGION"
-    CONTAINER_NAME: "frontend-env-$ENVIRONMENT:CONTAINER_NAME"
+    ACCOUNT_ID:    "frontend-env:ACCOUNT_ID"
+    IMAGE_REPO_NAME: "frontend-env:IMAGE_REPO_NAME"
+    AWS_DEFAULT_REGION: "frontend-env:AWS_DEFAULT_REGION"
+    CONTAINER_NAME: "frontend-env:CONTAINER_NAME"
 
 phases:
   pre_build:
     commands:
-      - echo "Using environment: $ENVIRONMENT"
       - echo "ACCOUNT_ID=$ACCOUNT_ID, REGION=$AWS_DEFAULT_REGION"
       - REPOSITORY_URI=${ACCOUNT_ID}.dkr.ecr.${AWS_DEFAULT_REGION}.amazonaws.com/${IMAGE_REPO_NAME}
       - echo "Logging in to Amazon ECR..."
