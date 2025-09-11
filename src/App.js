@@ -102,29 +102,7 @@ function App() {
     }
   };
 
-  const handleStopPolling = async () => {
-    setLoading(true);
-    setMessage({ text: '', type: '' });
-    
-    try {
-      const res = await fetch(`${apiBaseUrl}/stop`, { method: 'POST' });
-      const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Failed to stop polling');
-      
-      setMessage({ 
-        text: result.message || 'Polling stopped', 
-        type: 'success' 
-      });
-      fetchData();
-    } catch (err) {
-      setMessage({ 
-        text: err.message || 'Failed to stop polling', 
-        type: 'error' 
-      });
-    } finally {
-      setLoading(false);
-    }
-  };
+
 
   const handleClearData = async () => {
     setLoading(true);
@@ -216,42 +194,8 @@ function App() {
             ) : 'Start Polling'}
           </button>
           
-          {pollingStatus.isActive && (
-            <button 
-              className="btn btn-warning" 
-              onClick={handleStopPolling} 
-              disabled={loading}
-            >
-              {loading ? (
-                <>
-                  <span className="loading-spinner"></span>
-                  Stopping...
-                </>
-              ) : 'Stop Polling'}
-            </button>
-          )}
         </div>
       </form>
-
-      {message.text && (
-        <div className={`message message-${message.type}`}>
-          {message.text}
-        </div>
-      )}
-
-      {pollingStatus.isActive && (
-        <div className="polling-progress">
-          {/* <div className="progress-bar-container">
-            <div 
-              className="progress-bar" 
-              style={{ width: `${progressPercentage}%` }}
-            ></div>
-          </div> */}
-          <div className="progress-info">
-            {<span>Polling Started...</span>}
-          </div>
-        </div>
-      )}
 
       <div className="controls">
         <button 
