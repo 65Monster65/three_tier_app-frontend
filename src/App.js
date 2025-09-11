@@ -3,7 +3,7 @@ import './App.css';
 
 function App() {
   const apiBaseUrl = '/api';
-  const [endpoint, setEndpoint] = useState('https://lorem-api.com/api/uid');
+  const [endpoint, setEndpoint] = useState('https://lorem-api.com/api/lorem');
   const [frequency, setFrequency] = useState('5');
   const [duration, setDuration] = useState('3');
   const [message, setMessage] = useState({ text: '', type: '' });
